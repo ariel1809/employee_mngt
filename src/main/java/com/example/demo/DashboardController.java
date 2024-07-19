@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo;
 
 import java.io.File;
 import java.net.URL;
@@ -8,9 +8,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
 
-import com.example.demo.data.EmployeeData;
-import com.example.demo.data.GetData;
-import com.example.demo.utils.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;

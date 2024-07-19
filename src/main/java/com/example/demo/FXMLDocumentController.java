@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -7,8 +7,6 @@ import java.sql.ResultSet;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import com.example.demo.data.GetData;
-import com.example.demo.utils.Database;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

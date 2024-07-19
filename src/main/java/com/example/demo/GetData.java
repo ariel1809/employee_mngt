@@ -1,4 +1,4 @@
-package com.example.demo.data;
+package com.example.demo;
 
 public class GetData {
     public static String username;
