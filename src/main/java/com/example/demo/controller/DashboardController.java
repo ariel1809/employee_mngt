@@ -6,11 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import com.example.demo.data.EmployeeData;
 import com.example.demo.data.GetData;
@@ -132,13 +128,13 @@ public class DashboardController implements Initializable {
     private TextField addEmployee_lastName;
 
     @FXML
-    private ComboBox<?> addEmployee_gender;
+    private ComboBox<String> addEmployee_gender;
 
     @FXML
     private TextField addEmployee_phoneNum;
 
     @FXML
-    private ComboBox<?> addEmployee_position;
+    private ComboBox<String> addEmployee_position;
 
     @FXML
     private ImageView addEmployee_image;
@@ -215,6 +211,7 @@ public class DashboardController implements Initializable {
         int countData = 0;
         try {
 
+            assert connect != null;
             prepare = connect.prepareStatement(sql);
             result = prepare.executeQuery();
 
@@ -237,6 +234,7 @@ public class DashboardController implements Initializable {
         connect = Database.connectDb();
         int countData = 0;
         try {
+            assert connect != null;
             statement = connect.createStatement();
             result = statement.executeQuery(sql);
 
@@ -258,6 +256,7 @@ public class DashboardController implements Initializable {
         connect = Database.connectDb();
         int countData = 0;
         try {
+            assert connect != null;
             prepare = connect.prepareStatement(sql);
             result = prepare.executeQuery();
 
@@ -287,7 +286,7 @@ public class DashboardController implements Initializable {
             result = prepare.executeQuery();
 
             while (result.next()) {
-                chart.getData().add(new XYChart.Data(result.getString(1), result.getInt(2)));
+                chart.getData().add(new XYChart.Data<>(result.getString(1), result.getInt(2)));
             }
 
             home_chart.getData().add(chart);
@@ -317,7 +316,7 @@ public class DashboardController implements Initializable {
                     || addEmployee_gender.getSelectionModel().getSelectedItem() == null
                     || addEmployee_phoneNum.getText().isEmpty()
                     || addEmployee_position.getSelectionModel().getSelectedItem() == null
-                    || GetData.path == null || GetData.path == "") {
+                    || GetData.path == null || GetData.path.isEmpty()) {
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
@@ -411,7 +410,7 @@ public class DashboardController implements Initializable {
                     || addEmployee_gender.getSelectionModel().getSelectedItem() == null
                     || addEmployee_phoneNum.getText().isEmpty()
                     || addEmployee_position.getSelectionModel().getSelectedItem() == null
-                    || GetData.path == null || GetData.path == "") {
+                    || GetData.path == null || GetData.path.isEmpty()) {
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
@@ -484,7 +483,7 @@ public class DashboardController implements Initializable {
                     || addEmployee_gender.getSelectionModel().getSelectedItem() == null
                     || addEmployee_phoneNum.getText().isEmpty()
                     || addEmployee_position.getSelectionModel().getSelectedItem() == null
-                    || GetData.path == null || GetData.path == "") {
+                    || GetData.path == null || GetData.path.isEmpty()) {
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
@@ -548,20 +547,18 @@ public class DashboardController implements Initializable {
         }
     }
 
-    private String[] positionList = {"Marketer Coordinator", "Web Developer (Back End)", "Web Developer (Front End)", "App Developer"};
+    private final String[] positionList = {"Marketer Coordinator", "Web Developer (Back End)", "Web Developer (Front End)", "App Developer"};
 
     public void addEmployeePositionList() {
         List<String> listP = new ArrayList<>();
 
-        for (String data : positionList) {
-            listP.add(data);
-        }
+        Collections.addAll(listP, positionList);
 
-        ObservableList listData = FXCollections.observableArrayList(listP);
+        ObservableList<String> listData = FXCollections.observableArrayList(listP);
         addEmployee_position.setItems(listData);
     }
 
-    private String[] listGender = {"Male", "Female", "Others"};
+    private final String[] listGender = {"Male", "Female", "Others"};
 
     public void addEmployeeGendernList() {
         List<String> listG = new ArrayList<>();
@@ -570,7 +567,7 @@ public class DashboardController implements Initializable {
             listG.add(data);
         }
 
-        ObservableList listData = FXCollections.observableArrayList(listG);
+        ObservableList<String> listData = FXCollections.observableArrayList(listG);
         addEmployee_gender.setItems(listData);
     }
 
@@ -600,11 +597,7 @@ public class DashboardController implements Initializable {
                     return true;
                 } else if (predicateEmployeeData.getPosition().toLowerCase().contains(searchKey)) {
                     return true;
-                } else if (predicateEmployeeData.getDate().toString().contains(searchKey)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                } else return predicateEmployeeData.getDate().toString().contains(searchKey);
             });
         });
 
@@ -622,6 +615,7 @@ public class DashboardController implements Initializable {
         connect = Database.connectDb();
 
         try {
+            assert connect != null;
             prepare = connect.prepareStatement(sql);
             result = prepare.executeQuery();
             EmployeeData employeeD;
@@ -736,6 +730,7 @@ public class DashboardController implements Initializable {
         connect = Database.connectDb();
 
         try {
+            assert connect != null;
             prepare = connect.prepareStatement(sql);
             result = prepare.executeQuery();
 
@@ -757,10 +752,8 @@ public class DashboardController implements Initializable {
         return listData;
     }
 
-    private ObservableList<EmployeeData> salaryList;
-
     public void salaryShowListData() {
-        salaryList = salaryListData();
+        ObservableList<EmployeeData> salaryList = salaryListData();
 
         salary_col_employeeID.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
         salary_col_firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -855,7 +848,7 @@ public class DashboardController implements Initializable {
             if (option.get().equals(ButtonType.OK)) {
 
                 logout.getScene().getWindow().hide();
-                Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("FXMLDocument.fxml")));
                 Stage stage = new Stage();
                 Scene scene = new Scene(root);
 

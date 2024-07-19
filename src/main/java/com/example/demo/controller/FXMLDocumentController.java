@@ -4,11 +4,11 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import com.example.demo.data.GetData;
 import com.example.demo.utils.Database;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,7 +17,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -48,25 +47,22 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button close;
 
-    //    DATABASE TOOLS
-    private Connection connect;
-    private PreparedStatement prepare;
-    private ResultSet result;
-
     private double x = 0;
     private double y = 0;
     public void loginAdmin(){
 
         String sql = "SELECT * FROM admin WHERE username = ? and password = ?";
 
-        connect = Database.connectDb();
+        //    DATABASE TOOLS
+        Connection connect = Database.connectDb();
 
         try{
-            prepare = connect.prepareStatement(sql);
+            assert connect != null;
+            PreparedStatement prepare = connect.prepareStatement(sql);
             prepare.setString(1, username.getText());
             prepare.setString(2, password.getText());
 
-            result = prepare.executeQuery();
+            ResultSet result = prepare.executeQuery();
             Alert alert;
 
             if(username.getText().isEmpty() || password.getText().isEmpty()){
@@ -86,7 +82,7 @@ public class FXMLDocumentController implements Initializable {
                     alert.showAndWait();
 
                     loginBtn.getScene().getWindow().hide();
-                    Parent root = FXMLLoader.load(getClass().getResource("dashboard.fxml"));
+                    Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("dashboard.fxml")));
                     Stage stage = new Stage();
                     Scene scene = new Scene(root);
 
